@@ -107,19 +107,54 @@ final class MetalSmokeRenderer: NSObject, MTKViewDelegate {
     }
 }
 
+/// Keeps a selectable internal drawable resolution independent of HUD layout.
+final class ScaledMetalProbeView: MTKView {
+    var renderScale: CGFloat = 1.0 {
+        didSet { if renderScale != oldValue { setNeedsLayout() } }
+    }
+
+    override func didMoveToWindow() {
+        super.didMoveToWindow()
+        setNeedsLayout()
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        let nativeScale = window?.screen.scale ?? UIScreen.main.scale
+        let pixels = CGSize(
+            width: max(1, (bounds.width * nativeScale * renderScale).rounded()),
+            height: max(1, (bounds.height * nativeScale * renderScale).rounded())
+        )
+        if drawableSize != pixels { drawableSize = pixels }
+    }
+}
+
 struct MetalProbeView: UIViewRepresentable {
+    let quality: MW3QualityChoice
+
     final class Coordinator {
         var renderer: MetalSmokeRenderer?
     }
 
+    private var internalScale: CGFloat {
+        switch quality {
+        case .performance: return 0.60
+        case .balanced: return 0.75
+        case .quality: return 0.90
+        case .nearNative: return 1.00
+        }
+    }
+
     func makeCoordinator() -> Coordinator { Coordinator() }
 
-    func makeUIView(context: Context) -> MTKView {
-        let view = MTKView(frame: .zero, device: MTLCreateSystemDefaultDevice())
+    func makeUIView(context: Context) -> ScaledMetalProbeView {
+        let view = ScaledMetalProbeView(frame: .zero, device: MTLCreateSystemDefaultDevice())
         view.colorPixelFormat = .bgra8Unorm
         view.clearColor = MTLClearColor(red: 0.025, green: 0.045, blue: 0.08, alpha: 1)
         view.framebufferOnly = true
+        view.autoResizeDrawable = false
         view.isPaused = false
+        view.renderScale = internalScale
         if let device = view.device, let renderer = MetalSmokeRenderer(device: device) {
             context.coordinator.renderer = renderer
             view.delegate = renderer
@@ -127,5 +162,7 @@ struct MetalProbeView: UIViewRepresentable {
         return view
     }
 
-    func updateUIView(_ view: MTKView, context: Context) {}
+    func updateUIView(_ view: ScaledMetalProbeView, context: Context) {
+        view.renderScale = internalScale
+    }
 }

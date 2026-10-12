@@ -12,7 +12,7 @@ Observed: installed IW5 SP/MP binaries are Windows PE32 x86 and statically impor
 - C tests cover default state, supported changes, invalid/unsupported commands and no-mutation-on-rejection.
 
 ## GPU smoke scope
-- Swift Metal probe uses precompiled, independently written `.metal` vertex/fragment shaders to draw a triangle.
+- Swift Metal probe uses precompiled, independently written `.metal` vertex/fragment shaders to draw a triangle. The four graphics presets now change the Metal test view's internal drawable resolution (60/75/90/100% of screen pixel scale). This does not optimize or render MW3.
 - Currently maps color write mask, blend factors/ops and winding/culling. This is **not** a game shader translator.
 - D3D9 front faces use clockwise winding by default; culling mapping follows documented `D3DCULL` semantics.
 - No depth attachment in this smoke view. Tracked depth state does not imply functional depth testing.

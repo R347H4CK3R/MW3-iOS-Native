@@ -30,7 +30,8 @@
 - [ ] Story, Multiplayer and Spec Ops individual loading tests
 
 ## Gate 4 — Performance / packaging
-- [ ] Presets up to near-native internal resolution and actual GPU benchmarks
+- [x] Prototype four internal-resolution presets in the Metal test view (60/75/90/100%)
+- [ ] Connect actual IW5 graphics and benchmark device GPU performance
 - [ ] Memory/battery/frame-pacing profiling on iPhone 16 Plus
 - [x] XcodeGen spec and native iOS shell source added (non-playable)
 - [x] Compile the native iOS shell for Simulator on macOS (GitHub Actions run 38321355186)

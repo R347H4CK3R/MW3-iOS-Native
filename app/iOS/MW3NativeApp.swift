@@ -33,7 +33,7 @@ struct MW3NativeShellView: View {
 
     var body: some View {
         ZStack {
-            MetalProbeView().ignoresSafeArea()
+            MetalProbeView(quality: selectedQuality).ignoresSafeArea()
             Color.black.opacity(0.30).ignoresSafeArea()
             VStack(spacing: 10) {
                 HStack(spacing: 20) {

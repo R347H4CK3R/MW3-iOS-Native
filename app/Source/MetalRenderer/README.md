@@ -6,7 +6,7 @@ The installed MW3 SP and MP PE binaries statically import `d3d9.dll` (see `docs/
 - `D3D9StateBridge.h/.c`: portable C subset of native Direct3D 9 render-state IDs, defaults and validation. Unsupported state commands explicitly return `MW3_D3D9_UNSUPPORTED`.
 - `Tests/test_d3d9_state_bridge.c`: host-side C regression tests.
 - `ProbeShaders.metal`: synthetic triangle shaders compiled to a Metal library by Xcode on macOS.
-- `MetalSmokeRenderer.swift`: draws one triangle with a subset of D3D9 blend, color write and face culling semantics mapped to Metal.
+- `MetalSmokeRenderer.swift`: draws one triangle with a subset of D3D9 blend, color write and face culling semantics mapped to Metal. Its MTKView internal drawable resolution follows the shell's selected graphics preset (60%, 75%, 90%, or 100% of the screen's native scale).
 
 ## Not implemented
 - No IW5 engine, render command interception or complete D3D9 state tracking.

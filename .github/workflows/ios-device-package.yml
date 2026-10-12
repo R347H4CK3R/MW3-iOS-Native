@@ -39,6 +39,7 @@ jobs:
           test -d "$APP"
           test -f "$APP/Info.plist"
           test -f "$APP/MW3NativeShell"
+          test -s "$APP/default.metallib"  # Assert probe shaders are precompiled into the app
           file "$APP/MW3NativeShell"
           xcrun lipo -archs "$APP/MW3NativeShell" | grep -qw arm64
           /usr/libexec/PlistBuddy -c 'Print CFBundleIdentifier' "$APP/Info.plist"
