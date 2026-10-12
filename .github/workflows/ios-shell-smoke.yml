@@ -1,0 +1,32 @@
+name: iOS shell smoke build (manual)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ios-shell:
+    runs-on: macos-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - name: Generate project
+        run: xcodegen generate --spec project.yml
+      - name: Build unsigned simulator shell
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project MW3NativeShell.xcodeproj \
+            -scheme MW3NativeShell \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO \
+            build | tee build.log
+
+# Manual only because macOS runners may consume billable GitHub minutes.
+# This is a non-playable native shell, NOT a complete MW3 IPA.

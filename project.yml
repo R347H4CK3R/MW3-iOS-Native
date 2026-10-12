@@ -1,0 +1,31 @@
+name: MW3NativeShell
+options:
+  bundleIdPrefix: com.r347h4ck3r
+settings:
+  base:
+    SWIFT_VERSION: 5.0
+    IPHONEOS_DEPLOYMENT_TARGET: 17.0
+targets:
+  MW3NativeShell:
+    type: application
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: app/iOS
+        excludes:
+          - README.md
+      - path: app/Source/MetalRenderer
+        excludes:
+          - README.md
+      - path: app/Source/EngineBridge
+        excludes:
+          - Tests
+    info:
+      path: app/iOS/Resources/Info.plist
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.r347h4ck3r.mw3nativeshell
+        SWIFT_OBJC_BRIDGING_HEADER: app/iOS/MW3Native-Bridging-Header.h
+        TARGETED_DEVICE_FAMILY: "1"
+        CODE_SIGNING_ALLOWED: "NO"
+        GENERATE_INFOPLIST_FILE: "NO"

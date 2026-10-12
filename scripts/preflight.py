@@ -14,6 +14,11 @@ ROOT = Path(__file__).resolve().parents[1]
 REQUIRED = (
     "README.md",
     "CMakeLists.txt",
+    "project.yml",
+    "app/iOS/MW3NativeApp.swift",
+    "app/iOS/ControllerInputs.swift",
+    "app/iOS/GameFolderAccess.swift",
+    "app/Source/MetalRenderer/MetalSmokeRenderer.swift",
     ".github/workflows/validate.yml",
     "app/Source/EngineBridge/EngineBridge.c",
     "app/Source/EngineBridge/EngineFeatures.c",

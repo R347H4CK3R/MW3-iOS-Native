@@ -13,7 +13,7 @@ Private research and engineering project for a native ARM64 iOS adaptation of Ca
 
 ## Current status
 
-This repository is an **engineering scaffold**, not a port or a playable IPA. It contains a small, host-testable C controller-state bridge and CI validation. It contains no MW3 binaries, copyrighted assets, Metal renderer implementation, IW5 engine source, or functioning iOS Xcode app.
+This repository is an **engineering scaffold**, not a port or a playable IPA. It includes a portable C controller-state bridge with tests and an experimental SwiftUI iOS shell with a Metal clear-frame probe, touch/gamepad input, gyro-only aim input, folder selection, mode and graphics preset selectors. These are NOT integrated with IW5. It contains no MW3 binaries, copyrighted assets, game shader translation, real IW5 renderer or native game engine. The iOS shell is built via XcodeGen on macOS; its compilation is not yet verified.
 
 ## On this Windows PC
 

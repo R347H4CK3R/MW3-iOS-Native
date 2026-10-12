@@ -16,7 +16,7 @@ Windows IW5 binaries cannot be fed directly to CMake/Xcode/wasm2c. The build mus
 ## Engine interfaces
 - app/Source/EngineBridge contains a testable normalized controller bridge and planned mode/preset selection.
 - Engine integration requires a documented, authorized IW5 controller input ABI and engine lifecycle API.
-- app/Source/MetalRenderer is reserved for actual renderer implementation. No renderer exists yet.
+- app/Source/MetalRenderer currently contains a Metal clear-frame smoke test only. The real IW5 command-stream renderer does not exist.
 - app/ShaderTool is reserved for an actual shader pipeline. Tint may translate supported WGSL/SPIR-V to MSL; original IW5 shader formats require a separate proven decoding/translation process.
 - iOS GameController/CoreMotion adapters map control signals to the same bridge.
 - Build must distinguish host-only test scaffold from actual iOS application.

@@ -2,6 +2,9 @@
 __pycache__/
 *.pyc
 
+# Generated iOS project
+/MW3NativeShell.xcodeproj/
+
 # Build / IDE
 /build/
 /out/

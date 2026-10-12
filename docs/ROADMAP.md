@@ -29,7 +29,9 @@
 ## Gate 4 — Performance / packaging
 - [ ] Presets up to near-native internal resolution and actual GPU benchmarks
 - [ ] Memory/battery/frame-pacing profiling on iPhone 16 Plus
-- [ ] Actual iOS Xcode target built on macOS
+- [x] XcodeGen spec and native iOS shell source added (non-playable)
+- [ ] Build shell successfully on macOS and test on device
+- [ ] Integrate actual IW5 engine and game renderer
 - [ ] Device install test, logs and crash recovery
 - [ ] IPA artifact only once build passes and runtime is verified
 
