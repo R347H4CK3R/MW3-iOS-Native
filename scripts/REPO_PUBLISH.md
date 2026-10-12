@@ -1,19 +1,19 @@
-# Publish this new project to GitHub
+# Repository publishing status
 
-Target GitHub repository: https://github.com/R347H4CK3R/MW3-iOS-Native
+The project has been created as a **private GitHub repository**:
+https://github.com/R347H4CK3R/MW3-iOS-Native
 
-Local repo: C:\\Users\\Chris\\Documents\\MW3-iOS-Native
+Local Windows repository:
+C:\\Users\\Chris\\Documents\\MW3-iOS-Native
 
-The connected GitHub integration can modify existing repositories but does not offer a "create repository" operation. The PC currently has Git but no GitHub CLI (gh) on PATH.
+The local `main` branch tracks `origin/main`. Updates can be made and pushed with:
 
-Create a new **private, empty** GitHub repository named `MW3-iOS-Native`, owned by `R347H4CK3R`, with NO generated README/.gitignore/license (they already exist locally).
+    git -C "C:\\Users\\Chris\\Documents\\MW3-iOS-Native" add -A
+    git -C "C:\\Users\\Chris\\Documents\\MW3-iOS-Native" commit -m "Describe the change"
+    git -C "C:\\Users\\Chris\\Documents\\MW3-iOS-Native" push origin main
 
-Then in PowerShell:
+Do not commit source files from the original MW3 installation, proprietary game binaries, licensed assets or account tokens. Never confuse the iOS input/Metal probe shell with a working MW3 port.
 
-    cd 'C:\\Users\\Chris\\Documents\\MW3-iOS-Native'
-    git remote add origin https://github.com/R347H4CK3R/MW3-iOS-Native.git
-    git push -u origin main
-
-Alternatively, once the repository exists, the connected GitHub integration can upload source files.
-
-Do not commit original MW3 binaries or assets. No playable IPA currently exists.
+CI:
+- `.github/workflows/validate.yml` runs controller bridge tests and Python readiness checks on every push.
+- `.github/workflows/ios-shell-smoke.yml` is opt-in/manual and uses a potentially billable macOS runner. It has not been run.

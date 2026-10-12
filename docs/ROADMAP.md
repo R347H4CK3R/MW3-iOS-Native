@@ -4,7 +4,7 @@
 - [x] New, isolated Windows workspace
 - [x] Requirements documented (Story / Multiplayer / Spec Ops, touch, engine aim assist, gyro, Metal, no tilt steering)
 - [x] Portable controller bridge and normalization unit tests
-- [ ] Publish to new private GitHub repository (GitHub connector lacks repository creation)
+- [x] Published private GitHub repository R347H4CK3R/MW3-iOS-Native; two scaffold validation workflows passed
 - [ ] Verify reference renderer project and pin commit (source path names alone do not identify an upstream repository)
 
 ## Gate 1 — Engine provenance
@@ -20,7 +20,8 @@
 - [ ] Compare screenshots/frame output against authorized reference
 
 ## Gate 3 — Input / assets / modes
-- [ ] Native touch HUD and GameController adapter
+- [x] Prototype touch HUD and GameController adapter in iOS shell (not connected to IW5)
+- [ ] Bind standardized controller state to verified original IW5 input interface
 - [ ] CoreMotion gyro-only aiming, calibration and sensitivity UI, no tilt steering
 - [ ] Route through native controller entry points to preserve native aim assist
 - [ ] Authorized iOS Files folder selection and durable access testing
