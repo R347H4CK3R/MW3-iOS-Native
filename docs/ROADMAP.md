@@ -26,7 +26,8 @@
 - [ ] Bind standardized controller state to verified original IW5 input interface
 - [ ] CoreMotion gyro-only aiming, calibration and sensitivity UI, no tilt steering
 - [ ] Route through native controller entry points to preserve native aim assist
-- [ ] Authorized iOS Files folder selection and durable access testing
+- [x] Prototype iOS Files folder selection and in-place IWD/FastFile header inventory
+- [ ] Verify persistent access and real archive entry loading on an iPhone
 - [ ] Story, Multiplayer and Spec Ops individual loading tests
 
 ## Gate 4 — Performance / packaging

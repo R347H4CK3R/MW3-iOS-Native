@@ -3,7 +3,7 @@
 The XcodeGen project.yml defines an installable iOS prototype UI. It demonstrates:
 - Mode selection for Story, Multiplayer, Spec Ops
 - Graphics preset selection that changes internal render resolution for the Metal probe only, not MW3 gameplay
-- Authorized iOS folder picker (no auto-copy of game assets)
+- Authorized iOS folder picker (no auto-copy of game assets), plus read-only IWD/FastFile signature counts from the selected directory
 - Input-state test HUD and optional gyro aim (no tilt steering)
 - A Metal API render-pass smoke test (not a game renderer)
 

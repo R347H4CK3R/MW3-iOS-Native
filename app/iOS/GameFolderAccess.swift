@@ -7,6 +7,7 @@ final class GameFolderAccess: ObservableObject {
     @Published private(set) var folderName = "No folder selected"
     @Published private(set) var lastError: String?
     private var folderURL: URL?
+    var selectedFolder: URL? { folderURL }
     private var hasSecurityScope = false
     private let bookmarkKey = "MW3NativeShell.bookmark"
 

@@ -28,6 +28,7 @@ struct MW3NativeShellView: View {
     @StateObject private var files = GameFolderAccess()
     @StateObject private var inputs = ControllerInputs()
     @State private var choosingFolder = false
+    @State private var inventory = GameAssetInventory.Report()
     @State private var selectedMode: MW3ModeChoice = .story
     @State private var selectedQuality: MW3QualityChoice = .balanced
 
@@ -65,6 +66,10 @@ struct MW3NativeShellView: View {
                 .font(.caption)
                 .foregroundStyle(.white)
 
+                Text(inventory.summary)
+                    .font(.caption2).foregroundStyle(.white)
+                    .lineLimit(2)
+
                 if let error = files.lastError {
                     Text(error).font(.caption2).foregroundStyle(.yellow)
                 }
@@ -101,9 +106,17 @@ struct MW3NativeShellView: View {
         .fileImporter(isPresented: $choosingFolder, allowedContentTypes: [.folder]) { result in
             if case let .success(url) = result {
                 files.select(url)
+                if let folder = files.selectedFolder {
+                    inventory = GameAssetInventory.scan(folder: folder)
+                }
             }
         }
-        .onAppear { inputs.start() }
+        .onAppear {
+            inputs.start()
+            if let folder = files.selectedFolder {
+                inventory = GameAssetInventory.scan(folder: folder)
+            }
+        }
         .onDisappear { inputs.stop() }
     }
 }
