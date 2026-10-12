@@ -3,6 +3,9 @@ __pycache__/
 *.pyc
 
 # Generated iOS project
+*.xcresult
+*.ipa
+
 /MW3NativeShell.xcodeproj/
 
 # Build / IDE

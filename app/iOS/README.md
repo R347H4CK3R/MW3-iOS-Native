@@ -7,4 +7,6 @@ The XcodeGen project.yml defines an installable iOS prototype UI. It demonstrate
 - Input-state test HUD and optional gyro aim (no tilt steering)
 - A Metal API render-pass smoke test (not a game renderer)
 
-The IW5 engine, original controller ABI, shaders, actual MW3 Metal rendering and playable modes are **not integrated**. Do not label this shell as a playable MW3 IPA. Xcode project generation/build requires macOS with the Apple SDK and XcodeGen.
+The IW5 engine, original controller ABI, shaders, actual MW3 Metal rendering and playable modes are **not integrated**.
+
+A separate, manually triggered GitHub workflow (`ios-device-package.yml`) compiles the iPhoneOS shell as an unsigned ARM64 test IPA. It is clearly named `MW3NativeShell-UNSIGNED-NOT-A-GAME.ipa`, is not signed for installation, and is NOT a playable MW3 game. Do not label this shell as a playable MW3 IPA. Xcode project generation/build requires macOS with the Apple SDK and XcodeGen.

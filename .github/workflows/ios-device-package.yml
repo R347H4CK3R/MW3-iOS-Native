@@ -1,0 +1,59 @@
+name: iOS device shell unsigned IPA (manual)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  device-shell:
+    name: Build unsigned iPhoneOS shell
+    runs-on: macos-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - name: Generate Xcode project
+        run: xcodegen generate --spec project.yml
+      - name: Build unsigned iOS arm64 app
+        env:
+          DEPLOYMENT_TARGET: '17.0'
+        run: |
+          set -euo pipefail
+          xcodebuild \
+            -project MW3NativeShell.xcodeproj \
+            -scheme MW3NativeShell \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath "$RUNNER_TEMP/MW3Build" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGN_IDENTITY='' \
+            build | tee "$RUNNER_TEMP/build-iphoneos.log"
+      - name: Package and inspect unsigned IPA
+        run: |
+          set -euo pipefail
+          APP="$RUNNER_TEMP/MW3Build/Build/Products/Release-iphoneos/MW3NativeShell.app"
+          test -d "$APP"
+          test -f "$APP/Info.plist"
+          test -f "$APP/MW3NativeShell"
+          file "$APP/MW3NativeShell"
+          xcrun lipo -archs "$APP/MW3NativeShell" | grep -qw arm64
+          /usr/libexec/PlistBuddy -c 'Print CFBundleIdentifier' "$APP/Info.plist"
+          mkdir -p "$RUNNER_TEMP/Package/Payload" "$RUNNER_TEMP/Artifacts"
+          ditto "$APP" "$RUNNER_TEMP/Package/Payload/MW3NativeShell.app"
+          (cd "$RUNNER_TEMP/Package" && zip -qr "$RUNNER_TEMP/Artifacts/MW3NativeShell-UNSIGNED-NOT-A-GAME.ipa" Payload)
+          unzip -t "$RUNNER_TEMP/Artifacts/MW3NativeShell-UNSIGNED-NOT-A-GAME.ipa" | tail -1
+          shasum -a 256 "$RUNNER_TEMP/Artifacts/MW3NativeShell-UNSIGNED-NOT-A-GAME.ipa"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MW3NativeShell-UNSIGNED-NOT-A-GAME
+          path: ${{ runner.temp }}/Artifacts/MW3NativeShell-UNSIGNED-NOT-A-GAME.ipa
+          if-no-files-found: error
+          retention-days: 7
+
+# This artifact is a non-playable developer UI/input/Metal smoke shell.
+# It does not contain the IW5 engine, game assets, shaders or aim assist.
+# It is unsigned and needs external legitimate device signing to install.

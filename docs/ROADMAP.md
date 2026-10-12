@@ -31,7 +31,9 @@
 - [ ] Presets up to near-native internal resolution and actual GPU benchmarks
 - [ ] Memory/battery/frame-pacing profiling on iPhone 16 Plus
 - [x] XcodeGen spec and native iOS shell source added (non-playable)
-- [ ] Build shell successfully on macOS and test on device
+- [x] Compile the native iOS shell for Simulator on macOS (GitHub Actions run 38321355186)
+- [ ] Build unsigned iPhoneOS shell and inspect its ARM64 payload
+- [ ] Install/test shell on a physical iPhone
 - [ ] Integrate actual IW5 engine and game renderer
 - [ ] Device install test, logs and crash recovery
 - [ ] IPA artifact only once build passes and runtime is verified
