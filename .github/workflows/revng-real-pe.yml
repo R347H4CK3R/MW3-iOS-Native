@@ -27,7 +27,7 @@ jobs:
           docker run --rm \
             -v /tmp/revng-input:/input \
             revng/revng \
-            revng quick artifact emit-c-as-single-file /input/toy.exe /input/toy.c.yml
+            revng quick artifact emit-c-as-single-file /input/toy.exe -o /input/toy.c.yml
           test -s /tmp/revng-input/toy.c.yml
           echo "rev.ng output produced"
           wc -c /tmp/revng-input/toy.c.yml
