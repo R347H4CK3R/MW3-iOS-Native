@@ -31,6 +31,16 @@ jobs:
           test -s /tmp/revng-input/toy.c.yml
           echo "rev.ng output produced"
           wc -c /tmp/revng-input/toy.c.yml
+          echo 'Decompilation preview (synthetic input only):'
+          head -c 6000 /tmp/revng-input/toy.c.yml
+          echo
+      - name: Upload synthetic decompilation for inspection
+        uses: actions/upload-artifact@v4
+        with:
+          name: revng-toy-pe-decompilation
+          path: /tmp/revng-input/toy.c.yml
+          if-no-files-found: error
+          retention-days: 7
       - name: Scope of proof
         run: |
           echo "An established decompiler processed a synthetic x86 PE file."
