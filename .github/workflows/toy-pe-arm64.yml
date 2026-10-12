@@ -1,0 +1,50 @@
+name: x86 PE32 to ARM64 toy validation
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  toy-lift:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install ARM64 cross compiler and runtime
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y gcc-aarch64-linux-gnu qemu-user
+      - name: Generate standalone toy x86 PE32 and lift to C
+        run: |
+          python scripts/toy_pe_lifter.py --fixture /tmp/toy.exe
+          python scripts/inspect_pe.py /tmp/toy.exe
+          python scripts/toy_pe_lifter.py --input /tmp/toy.exe --output /tmp/lifted.c
+      - name: Compile to ARM64 and execute
+        run: |
+          aarch64-linux-gnu-gcc -static -O2 /tmp/lifted.c -o /tmp/lifted.arm64
+          file /tmp/lifted.arm64
+          readelf -h /tmp/lifted.arm64 | grep AArch64
+          test "$(qemu-aarch64 /tmp/lifted.arm64)" = "42"
+      - name: Reject unsupported x86 opcodes
+        run: |
+          python - <<'PY'
+          import sys
+          from pathlib import Path
+          sys.path.insert(0, "scripts")
+          from toy_pe_lifter import lift
+          p=Path("/tmp/toy.exe")
+          b=bytearray(p.read_bytes())
+          b[0x200]=0x90  # NOP deliberately unsupported
+          p.write_bytes(b)
+          try:
+              lift(p)
+          except ValueError as ex:
+              print("Expected rejection:",ex)
+          else:
+              raise SystemExit("FAIL: unsupported opcode was accepted")
+          PY
+
+# Narrow proof: one fabricated PE32 function with two instructions + return.
+# Not McSema, not IW5, not Mach-O, not native iOS.
