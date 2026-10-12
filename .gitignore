@@ -1,0 +1,45 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Build / IDE
+/build/
+/out/
+/DerivedData/
+*.ipa
+*.app/
+*.xcarchive/
+*.dSYM/
+*.mobileprovision
+*.p12
+*.p8
+*.key
+.DS_Store
+.vs/
+.vscode/
+# User-owned game payloads and translated proprietary content
+/GameFiles/
+/game-files/
+/assets/
+/private-assets/
+/private-build-inputs/
+/transcoded/
+/extracted/
+*.ff
+*.iwd
+*.iwi
+*.ipak
+*.pak
+*.bik
+*.exe
+*.dll
+*.cdx
+*.xmodel
+*.xanim
+*.sabs
+*.sab
+# Runtime state and secrets
+.env
+.env.*
+!.env.example
+*.log

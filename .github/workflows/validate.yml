@@ -1,0 +1,38 @@
+name: Validate scaffold
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  c-bridge:
+    name: Build and test controller bridge
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -S . -B build -DBUILD_TESTING=ON -DCMAKE_BUILD_TYPE=Release
+      - name: Build
+        run: cmake --build build --parallel
+      - name: CTest
+        run: ctest --test-dir build --output-on-failure
+
+  project-preflight:
+    name: Validate project prerequisites
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Unit tests
+        run: python -m unittest discover -s scripts -p 'test_*.py' -v
+      - name: Readiness report
+        run: python scripts/preflight.py
+
+# No MW3 executable is built here: a usable engine input, renderer,
+# shaders, iOS app target and Apple platform tests are not yet available.
