@@ -73,3 +73,38 @@ jobs:
 # Scope: fabricated x86 PE with one constant-return function.
 # The tiny prototype shim is specific to this fixture.
 # NOT an IW5 lift, not native iOS runtime, and not game conversion.
+
+  ios-lifted-object:
+    name: Compile revng C to iOS Mach-O (not playable)
+    needs: revng-pe
+    runs-on: macos-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: revng-toy-pe-arm64-proof
+          path: recovered
+      - name: Compile recovered toy C using iPhoneOS SDK
+        run: |
+          set -eux
+          cat > recovered/types-and-globals.h <<'EOF'
+          #pragma once
+          #include <stdint.h>
+          typedef uint32_t generic32_t;
+          #define _ABI(x)
+          EOF
+          touch recovered/helpers.h
+          SDK="$(xcrun --sdk iphoneos --show-sdk-path)"
+          xcrun --sdk iphoneos clang -target arm64-apple-ios17.0 \
+            -isysroot "$SDK" -std=c11 -O2 -Irecovered \
+            -c recovered/toy.c -o recovered/toy-ios-arm64.o
+          file recovered/toy-ios-arm64.o | grep -E 'Mach-O.*arm64'
+          echo 'PASS: same rev.ng recovered toy function built as iOS arm64 Mach-O object'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: revng-toy-ios-arm64-object
+          path: recovered/toy-ios-arm64.o
+          if-no-files-found: error
+          retention-days: 7
+
+# The iOS artifact is an object file, not an app or executable.
