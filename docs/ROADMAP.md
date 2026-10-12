@@ -15,8 +15,9 @@
 
 ## Gate 2 — Real renderer
 - [x] Audit installed PE static imports: IW5 SP and MP both import d3d9.dll (not d3d11.dll)
+- [x] Add portable D3D9 render-state prototype and synthetic precompiled Metal triangle probe (NOT IW5)
 - [ ] Trace actual D3D9 graphics state and shader formats at runtime before designing full Metal mapping
-- [ ] Implement Metal command decoder in app/Source/MetalRenderer
+- [ ] Implement actual IW5 Metal command decoder beyond synthetic D3D9 render-state subset
 - [ ] Validate shader extraction, Tint supported input, MSL precompilation
 - [ ] Compare screenshots/frame output against authorized reference
 

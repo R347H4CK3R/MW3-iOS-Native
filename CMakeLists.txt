@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(MW3NativeScaffold VERSION 0.1.0 LANGUAGES C)
+project(MW3NativeScaffold VERSION 0.2.0 LANGUAGES C)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
@@ -10,6 +10,13 @@ add_library(mw3_input_bridge STATIC
 )
 target_include_directories(mw3_input_bridge
   PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/app/Source/EngineBridge"
+)
+
+add_library(mw3_d3d9_state STATIC
+  app/Source/MetalRenderer/D3D9StateBridge.c
+)
+target_include_directories(mw3_d3d9_state
+  PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/app/Source/MetalRenderer"
 )
 
 include(CTest)
@@ -25,4 +32,10 @@ if(BUILD_TESTING)
   )
   target_link_libraries(test_engine_features PRIVATE mw3_input_bridge)
   add_test(NAME engine_features COMMAND test_engine_features)
+
+  add_executable(test_d3d9_state_bridge
+    app/Source/MetalRenderer/Tests/test_d3d9_state_bridge.c
+  )
+  target_link_libraries(test_d3d9_state_bridge PRIVATE mw3_d3d9_state)
+  add_test(NAME d3d9_state_bridge COMMAND test_d3d9_state_bridge)
 endif()

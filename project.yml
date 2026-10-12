@@ -17,6 +17,7 @@ targets:
       - path: app/Source/MetalRenderer
         excludes:
           - README.md
+          - Tests
       - path: app/Source/EngineBridge
         excludes:
           - Tests
