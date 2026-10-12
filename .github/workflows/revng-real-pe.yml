@@ -1,0 +1,37 @@
+name: revng real PE decompilation test
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  revng-pe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate independent synthetic x86 PE
+        run: |
+          mkdir -p /tmp/revng-input
+          python scripts/toy_pe_lifter.py --fixture /tmp/revng-input/toy.exe
+          python scripts/inspect_pe.py /tmp/revng-input/toy.exe
+      - name: Fetch official rev.ng container and inspect CLI
+        run: |
+          docker pull revng/revng
+          docker run --rm revng/revng revng --help
+      - name: Decompile actual PE through rev.ng
+        run: |
+          set -euo pipefail
+          docker run --rm \
+            -v /tmp/revng-input:/input \
+            revng/revng \
+            revng quick artifact emit-c-as-single-file /input/toy.exe /input/toy.c.yml
+          test -s /tmp/revng-input/toy.c.yml
+          echo "rev.ng output produced"
+          wc -c /tmp/revng-input/toy.c.yml
+      - name: Scope of proof
+        run: |
+          echo "An established decompiler processed a synthetic x86 PE file."
+          echo "This does not demonstrate compilable C, valid Win32 APIs, or MW3 conversion."
