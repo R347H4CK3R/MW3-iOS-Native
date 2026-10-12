@@ -1,4 +1,4 @@
-name: revng real PE decompilation test
+name: revng PE to ARM64 execution proof (toy)
 
 on:
   workflow_dispatch:
@@ -17,31 +17,59 @@ jobs:
           mkdir -p /tmp/revng-input
           python scripts/toy_pe_lifter.py --fixture /tmp/revng-input/toy.exe
           python scripts/inspect_pe.py /tmp/revng-input/toy.exe
-      - name: Fetch official rev.ng container and inspect CLI
-        run: |
-          docker pull revng/revng
-          docker run --rm revng/revng revng --help
-      - name: Decompile actual PE through rev.ng
+      - name: Fetch official rev.ng container
+        run: docker pull revng/revng
+      - name: Decompile real PE through rev.ng
         run: |
           set -euo pipefail
-          docker run --rm \
-            -v /tmp/revng-input:/input \
-            revng/revng \
-            revng quick artifact emit-c-as-single-file /input/toy.exe -o /input/toy.c.yml
-          test -s /tmp/revng-input/toy.c.yml
-          echo "rev.ng output produced"
-          wc -c /tmp/revng-input/toy.c.yml
-          echo 'Decompilation preview (synthetic input only):'
-          head -c 6000 /tmp/revng-input/toy.c.yml
-          echo
-      - name: Upload synthetic decompilation for inspection
+          docker run --rm -v /tmp/revng-input:/input revng/revng \
+            revng quick artifact emit-c-as-single-file /input/toy.exe -o /input/toy.ptml
+          test -s /tmp/revng-input/toy.ptml
+      - name: Convert PTML into plain decompiled C
+        run: |
+          docker run --rm -v /tmp/revng-input:/input revng/revng \
+            revng ptml -p /input/toy.ptml -o /input/toy.c
+          test -s /tmp/revng-input/toy.c
+          echo 'Recovered function:'
+          cat /tmp/revng-input/toy.c
+      - name: Compile actual recovered C and execute under ARM64 QEMU
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y gcc-aarch64-linux-gnu qemu-user
+          cat > /tmp/revng-input/types-and-globals.h <<'EOF'
+          #pragma once
+          #include <stdint.h>
+          typedef uint32_t generic32_t;
+          #define _ABI(x)
+          EOF
+          touch /tmp/revng-input/helpers.h
+          cat > /tmp/revng-input/driver.c <<'EOF'
+          #include "types-and-globals.h"
+          #include <stdio.h>
+          extern generic32_t function_0x401000_Code_x86(void);
+          int main(void) {
+            unsigned int value = function_0x401000_Code_x86();
+            printf("%u\n", value);
+            return value == 42 ? 0 : 1;
+          }
+          EOF
+          aarch64-linux-gnu-gcc -static -O2 -I/tmp/revng-input \
+            /tmp/revng-input/toy.c /tmp/revng-input/driver.c \
+            -o /tmp/revng-input/toy-arm64
+          file /tmp/revng-input/toy-arm64
+          test "$(qemu-aarch64 /tmp/revng-input/toy-arm64)" = "42"
+          echo 'PASS: rev.ng-generated C function executed on ARM64 Linux and returned 42'
+      - name: Upload inspection artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: revng-toy-pe-decompilation
-          path: /tmp/revng-input/toy.c.yml
+          name: revng-toy-pe-arm64-proof
+          path: |
+            /tmp/revng-input/toy.ptml
+            /tmp/revng-input/toy.c
           if-no-files-found: error
           retention-days: 7
-      - name: Scope of proof
-        run: |
-          echo "An established decompiler processed a synthetic x86 PE file."
-          echo "This does not demonstrate compilable C, valid Win32 APIs, or MW3 conversion."
+
+# Scope: fabricated x86 PE with one constant-return function.
+# The tiny prototype shim is specific to this fixture.
+# NOT an IW5 lift, not native iOS runtime, and not game conversion.
