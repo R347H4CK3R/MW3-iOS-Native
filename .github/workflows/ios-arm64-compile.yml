@@ -1,0 +1,28 @@
+name: iOS ARM64 native compile proof
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ios-arm64-object:
+    runs-on: macos-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile portable C for iOS ARM64 using Apple SDK
+        run: |
+          set -eux
+          SDK="$(xcrun --sdk iphoneos --show-sdk-path)"
+          xcrun --sdk iphoneos clang -target arm64-apple-ios17.0 \
+            -isysroot "$SDK" -std=c11 -O2 \
+            -c toolchain/arm64_smoke.c -o /tmp/mw3_arm64_smoke.o
+          file /tmp/mw3_arm64_smoke.o
+          file /tmp/mw3_arm64_smoke.o | grep -E 'Mach-O.*arm64'
+          xcrun llvm-objdump --macho --private-headers /tmp/mw3_arm64_smoke.o || true
+      - name: Report scope
+        run: |
+          echo 'Only a standalone portable C object compiled to ARM64 Mach-O.'
+          echo 'No MW3 executable lifting, game code, iOS app launch, or IPA is validated.'
