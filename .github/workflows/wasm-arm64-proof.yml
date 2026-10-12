@@ -1,0 +1,43 @@
+name: Wasm to ARM64 proof (toy only)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  toy-arm64-proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install WABT and ARM64 toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wabt gcc-aarch64-linux-gnu qemu-user
+      - name: Convert open toy module to C
+        run: |
+          set -eux
+          wat2wasm toolchain/toy_factorial.wat -o /tmp/toy_factorial.wasm
+          wasm2c /tmp/toy_factorial.wasm -o /tmp/toy_factorial.c --module-name toy_factorial
+          test -s /tmp/toy_factorial.c
+          test -s /tmp/toy_factorial.h
+      - name: Locate WABT runtime sources
+        run: |
+          dpkg -L wabt | grep -E '(wasm-rt-impl.c|wasm-rt.h)$' || true
+          ls -l /usr/include/wasm-rt* 2>/dev/null || true
+      - name: Verify generated C exists
+        run: |
+          grep -q 'wasm2c' /tmp/toy_factorial.h || test -s /tmp/toy_factorial.h
+      - name: ARM64 object test
+        run: |
+          set -eux
+          # Compilation of the generated C is checked independently of the
+          # runtime's availability in the distro's WABT package.
+          aarch64-linux-gnu-gcc -std=c11 -I/usr/include -c /tmp/toy_factorial.c -o /tmp/toy_factorial.arm64.o
+          file /tmp/toy_factorial.arm64.o
+          readelf -h /tmp/toy_factorial.arm64.o | grep 'AArch64'
+
+# Does not convert x86 PE to Wasm, does not build iOS Mach-O and
+# does not claim to execute MW3.
