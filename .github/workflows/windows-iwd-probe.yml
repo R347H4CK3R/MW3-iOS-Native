@@ -1,0 +1,49 @@
+name: Windows IWD native validation tool (manual)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-win64-reader:
+    name: Build portable IWD archive validator
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: false
+          install: >-
+            mingw-w64-ucrt-x86_64-gcc
+            mingw-w64-ucrt-x86_64-zlib
+      - name: Build independent native IWD reader CLI
+        shell: msys2 {0}
+        run: |
+          set -euo pipefail
+          mkdir -p win-reader
+          gcc -std=c11 -O2 -Wall -Wextra \
+            -Iapp/Source/AssetRuntime \
+            app/Source/AssetRuntime/IWDReader.c \
+            app/Source/AssetRuntime/Tests/iwd_probe_cli.c \
+            -lz -o win-reader/iwd_probe_win64.exe
+          cp /ucrt64/bin/zlib1.dll win-reader/
+      - name: Synthetic archive decode test on Windows
+        shell: pwsh
+        run: |
+          python scripts/make_iwd_fixture.py windows-fixtures
+          & .\win-reader\iwd_probe_win64.exe windows-fixtures\valid.iwd
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+      - name: Upload only portable probe binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: IWD-Probe-Windows-x64-No-Game-Files
+          path: win-reader/
+          retention-days: 7
+          if-no-files-found: error
+
+# Does NOT upload/download/copy user-owned MW3 game archives.
+# Run iwd_probe_win64.exe locally with a user-selected IWD path.
