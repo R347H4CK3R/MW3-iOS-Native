@@ -9,7 +9,9 @@
 
 ## Gate 1 — Engine provenance
 - [ ] Determine whether a functional MW3 IW5 WebAssembly build exists and verify rights
-- [ ] Establish whether C or Wasm AOT translation is technically feasible
+- [x] Audit actual IW5 PE32 import names, ordinal imports, TLS and relocation directories (not execution)
+- [x] Implement portable host timing primitives and C tests for future native runtime adapters
+- [ ] Establish whether a complete IW5 C or Wasm AOT translation is technically and legally feasible
 - [ ] Link game entry points without copyrighted binaries in Git
 - [ ] Build ARM64 iOS smoke test running engine code
 

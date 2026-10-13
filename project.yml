@@ -21,6 +21,10 @@ targets:
       - path: app/Source/EngineBridge
         excludes:
           - Tests
+      - path: app/Source/HostRuntime
+        excludes:
+          - README.md
+          - Tests
     info:
       path: app/iOS/Resources/Info.plist
     settings:
