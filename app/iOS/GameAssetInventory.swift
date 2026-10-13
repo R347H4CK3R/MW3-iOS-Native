@@ -10,6 +10,9 @@ enum GameAssetInventory {
         var signedFastFiles = 0
         var unsignedFastFiles = 0
         var invalidFastFiles = 0
+        var firstArchiveEntries = 0
+        var sampleReadVerified = false
+        var firstArchiveError: String?
         var mainFound = false
         var zoneFound = false
 
@@ -17,7 +20,8 @@ enum GameAssetInventory {
             if !mainFound || !zoneFound {
                 return "Game folder incomplete: select the directory containing main and zone."
             }
-            return "IWD: \(zipHeaders)/\(iwdFiles) ZIP headers | FastFiles: \(fastFiles) (signed \(signedFastFiles), unsigned \(unsignedFastFiles), unknown \(invalidFastFiles)). Containers only; IW5 engine not linked."
+            let archive = firstArchiveError ?? "First IWD index: \(firstArchiveEntries) entries; in-memory CRC sample: \(sampleReadVerified ? "OK" : "not verified")"
+            return "IWD: \(zipHeaders)/\(iwdFiles) ZIP headers | FastFiles: \(fastFiles) (signed \(signedFastFiles), unsigned \(unsignedFastFiles), unknown \(invalidFastFiles)). \(archive). IW5 engine not linked."
         }
     }
 
@@ -56,6 +60,39 @@ enum GameAssetInventory {
                 // A local-file ZIP signature is a format hint, NOT integrity verification.
                 if first == Data([0x50, 0x4b, 0x03, 0x04]) {
                     result.zipHeaders += 1
+                }
+            }
+        }
+        if result.mainFound {
+            // One sample IWD only; do not scan/decompress every game archive on the UI thread.
+            if let archive = files(in: main)
+                .filter({ $0.pathExtension.lowercased() == "iwd" })
+                .sorted(by: { $0.lastPathComponent < $1.lastPathComponent }).first {
+                var metadata = MW3IWDStats()
+                let code = archive.path.withCString { mw3_iwd_probe($0, &metadata) }
+                if code == MW3_IWD_OK {
+                    result.firstArchiveEntries = Int(metadata.entry_count)
+                    let sample = withUnsafePointer(to: &metadata.sample_name) { pointer in
+                        pointer.withMemoryRebound(to: CChar.self, capacity: 256) {
+                            String(cString: $0)
+                        }
+                    }
+                    let length = Int(metadata.sample_uncompressed_size)
+                    if !sample.isEmpty && length > 0 && length <= 65536 {
+                        var bytes = [UInt8](repeating: 0, count: length)
+                        var written: Int = 0
+                        let verified = archive.path.withCString { path in
+                            sample.withCString { entry in
+                                bytes.withUnsafeMutableBufferPointer { buffer in
+                                    mw3_iwd_read_entry(path, entry, buffer.baseAddress,
+                                                       buffer.count, &written)
+                                }
+                            }
+                        }
+                        result.sampleReadVerified = verified == MW3_IWD_OK && written == length
+                    }
+                } else {
+                    result.firstArchiveError = "IWD directory read: code \(code.rawValue)"
                 }
             }
         }

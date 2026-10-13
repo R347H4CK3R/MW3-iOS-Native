@@ -13,6 +13,8 @@ Private research and engineering project for a native ARM64 iOS adaptation of Ca
 
 ## Current status
 
+A bounded, read-only C IWD archive reader has been added at `app/Source/AssetRuntime`. It supports ZIP directory indexing and in-memory stored/Deflate sample decoding with CRC verification. This does **not** decode IW5 `.ff` zones or replace the IW5 engine.
+
 This repository is an **engineering scaffold**, not a port or a playable IPA. It includes a portable C controller-state bridge with tests and an experimental SwiftUI iOS shell with a precompiled Metal triangle probe with a limited D3D9 state bridge, touch/gamepad input, gyro-only aim input, folder selection, mode and graphics preset selectors. These are NOT integrated with IW5. It contains no MW3 binaries, copyrighted assets, game shader translation, real IW5 renderer or native game engine. The iOS shell is built via XcodeGen on macOS; its compilation is not yet verified.
 
 ## On this Windows PC

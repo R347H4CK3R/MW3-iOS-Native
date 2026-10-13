@@ -29,7 +29,8 @@
 - [ ] CoreMotion gyro-only aiming, calibration and sensitivity UI, no tilt steering
 - [ ] Route through native controller entry points to preserve native aim assist
 - [x] Prototype iOS Files folder selection and in-place IWD/FastFile header inventory
-- [ ] Verify persistent access and real archive entry loading on an iPhone
+- [x] Add portable C IWD ZIP central-directory reader, in-memory Deflate/stored extraction and CRC check, synthetic fixtures
+- [ ] Verify reading actual user-owned IWD data through iOS Files on an iPhone
 - [ ] Story, Multiplayer and Spec Ops individual loading tests
 
 ## Gate 4 — Performance / packaging

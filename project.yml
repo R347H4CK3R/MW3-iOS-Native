@@ -25,6 +25,12 @@ targets:
         excludes:
           - README.md
           - Tests
+      - path: app/Source/AssetRuntime
+        excludes:
+          - README.md
+          - Tests
+    dependencies:
+      - sdk: libz.tbd
     info:
       path: app/iOS/Resources/Info.plist
     settings:

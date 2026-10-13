@@ -2,6 +2,9 @@
 __pycache__/
 *.pyc
 
+# Synthetic local test fixtures
+/local-fixtures/
+
 # Generated iOS project
 *.xcresult
 *.ipa
