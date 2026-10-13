@@ -4,7 +4,7 @@
 #include <string.h>
 
 int main(int argc, char **argv) {
-    assert(argc == 4);
+    assert(argc == 5);
     MW3IWDStats stats;
     assert(mw3_iwd_probe(argv[1], &stats) == MW3_IWD_OK);
     assert(stats.entry_count == 2u);
@@ -32,6 +32,10 @@ int main(int argc, char **argv) {
            == MW3_IWD_RANGE);
     assert(mw3_iwd_probe(argv[2], &stats) == MW3_IWD_FORMAT);
     assert(mw3_iwd_probe(argv[3], &stats) == MW3_IWD_UNSUPPORTED);
+    assert(mw3_iwd_probe(argv[4], &stats) == MW3_IWD_OK);
+    assert(mw3_iwd_read_entry(argv[4], "alpha.txt", out, sizeof(out), &size)
+           == MW3_IWD_CHECKSUM);
+    assert(size == 0u);
     puts("Synthetic ZIP/IWD archive reader tests passed");
     return 0;
 }

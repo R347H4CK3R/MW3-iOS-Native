@@ -20,7 +20,7 @@ entry is available, the result of decoding one sample in memory.
 ## Test
 Linux GitHub Actions CTest generates a tiny archive containing an
 independently authored Deflate file, stored binary and intentionally
-invalid archives. Tests exercise both methods, CRC verification,
+invalid archives. Tests exercise both methods, successful CRC verification, deliberate CRC mismatch rejection,
 unsupported/traversal rejection and missing entries.
 
 Does not automatically accept arbitrary ZIP features present in some

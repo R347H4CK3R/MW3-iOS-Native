@@ -77,6 +77,7 @@ if(BUILD_TESTING)
     "${CMAKE_CURRENT_BINARY_DIR}/iwd_fixtures/valid.iwd"
     "${CMAKE_CURRENT_BINARY_DIR}/iwd_fixtures/not_zip.iwd"
     "${CMAKE_CURRENT_BINARY_DIR}/iwd_fixtures/unsafe.iwd"
+    "${CMAKE_CURRENT_BINARY_DIR}/iwd_fixtures/bad_crc.iwd"
   )
   set_tests_properties(iwd_reader PROPERTIES FIXTURES_REQUIRED iwd_fixture)
 
