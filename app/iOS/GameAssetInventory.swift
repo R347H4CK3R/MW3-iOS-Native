@@ -105,10 +105,18 @@ enum GameAssetInventory {
                     result.invalidFastFiles += 1
                     continue
                 }
-                switch magic {
-                case "IWffu100": result.unsignedFastFiles += 1
-                case "IWff0100": result.signedFastFiles += 1
-                default: result.invalidFastFiles += 1
+                // Confirm an actual 24-byte readable header through the
+                // same portable C reader used by native desktop tests.
+                var parsed = MW3FFHeader()
+                let status = file.path.withCString { mw3_ff_header_read($0, &parsed) }
+                if status != MW3_FF_OK {
+                    result.invalidFastFiles += 1
+                } else {
+                    switch magic {
+                    case "IWffu100": result.unsignedFastFiles += 1
+                    case "IWff0100": result.signedFastFiles += 1
+                    default: result.invalidFastFiles += 1
+                    }
                 }
             }
         }

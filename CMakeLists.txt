@@ -29,6 +29,7 @@ target_include_directories(mw3_host_clock
 find_package(ZLIB REQUIRED)
 add_library(mw3_iwd_reader STATIC
   app/Source/AssetRuntime/IWDReader.c
+  app/Source/AssetRuntime/FastFileHeader.c
 )
 target_include_directories(mw3_iwd_reader
   PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/app/Source/AssetRuntime"
@@ -61,6 +62,13 @@ if(BUILD_TESTING)
   target_link_libraries(test_host_clock PRIVATE mw3_host_clock)
   add_test(NAME host_clock COMMAND test_host_clock)
 
+  add_executable(test_ff_header app/Source/AssetRuntime/Tests/test_ff_header.c)
+  target_link_libraries(test_ff_header PRIVATE mw3_iwd_reader)
+  add_test(NAME ff_header COMMAND test_ff_header
+    "${CMAKE_CURRENT_BINARY_DIR}/test-ff-a.bin"
+    "${CMAKE_CURRENT_BINARY_DIR}/test-ff-b.bin"
+    "${CMAKE_CURRENT_BINARY_DIR}/test-ff-short.bin")
+
   find_package(Python3 COMPONENTS Interpreter REQUIRED)
   add_executable(test_iwd_reader
     app/Source/AssetRuntime/Tests/test_iwd_reader.c
@@ -86,7 +94,7 @@ if(BUILD_TESTING)
   if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
     foreach(test_target IN ITEMS
       test_input_bridge test_engine_features test_d3d9_state_bridge
-      test_host_clock test_iwd_reader)
+      test_host_clock test_iwd_reader test_ff_header)
       target_compile_options("${test_target}" PRIVATE -UNDEBUG)
     endforeach()
   endif()

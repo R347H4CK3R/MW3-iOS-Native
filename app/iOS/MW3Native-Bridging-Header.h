@@ -2,3 +2,4 @@
 #import "../Source/EngineBridge/EngineFeatures.h"
 #import "../Source/MetalRenderer/D3D9StateBridge.h"
 #import "../Source/AssetRuntime/IWDReader.h"
+#import "../Source/AssetRuntime/FastFileHeader.h"
